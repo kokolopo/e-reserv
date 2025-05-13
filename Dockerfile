@@ -13,7 +13,7 @@ RUN npm i
 COPY . .
 
 # Expose port 3000 pada image
-EXPOSE 4321
+EXPOSE 3000
 
 # Jalankan aplikasi saat container dimulai
 CMD [ "npm", "start" ]
