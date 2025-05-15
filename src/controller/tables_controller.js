@@ -54,9 +54,13 @@ const tablesController = {
     SELECT
       t.table_id, t.name, 
       CASE 
-        WHEN bt.reservation_id IS NULL THEN 'Available' 
-        ELSE 'Booked' 
-      END AS status
+        WHEN bt.reservation_id IS NULL THEN 1 
+        ELSE 0 
+      END AS status,
+      CASE 
+        WHEN bt.reservation_id IS NULL THEN 'available' 
+        ELSE 'not available' 
+      END AS status_name
     FROM
       tables t
     LEFT JOIN
