@@ -4,8 +4,7 @@ import { hashPassword, comparePassword } from "../utility/gen_password.js";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { log } from "console";
-import { get } from "http";
-import getTanggalJakartaFormatted from "../utility/get_date_now.js";
+import { getTanggalJakartaFormatted } from "../utility/get_date_now.js";
 
 dotenv.config();
 

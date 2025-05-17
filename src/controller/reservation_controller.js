@@ -4,13 +4,20 @@ import { QueryTypes } from "sequelize";
 
 const reservationController = {
   getAllReservations: async (req, res) => {
-    const qs1 = `
-        select r.*, t.name as table_name, u.username as user_name, rs.name as reservation_status 
+    const { status } = req.query;
+
+    let qs1 = `
+        select r.*, t.name as table_name, u.email as user_email, rs.name as reservation_status 
         from reservations r
         join tables t on r.table_id = t.table_id
         join users u on r.user_id = u.user_id
         join reservation_status rs on r.reservation_status_id = rs.reservation_status_id 
     `;
+
+    if (status) {
+      qs1 += ` where r.reservation_status_id = ${parseInt(status)}`;
+    }
+
     try {
       const data = await sequelize.query(qs1, {
         type: QueryTypes.SELECT,
@@ -72,6 +79,29 @@ const reservationController = {
         .status(200)
         .json({ message: "berhasil mendapatkan data reservations", data });
     } catch (error) {
+      res.status(500).json({ error });
+    }
+  },
+
+  checkInTable: async (req, res) => {
+    const { table_id, reservation_id } = req.body;
+
+    try {
+      const data = await sequelize.query(
+        `SELECT * FROM reservations r WHERE r.reservation_id = ${reservation_id} AND r.table_id = ${table_id} AND r.reservation_status_id = 1`
+      );
+      if (!data[0].length) {
+        return res.status(400).json({ message: "reservation not found" });
+      }
+      await sequelize.query(
+        `UPDATE reservations SET reservation_status_id = 2 WHERE reservation_id = ${reservation_id}`
+      );
+      res
+        .status(200)
+        .json({ message: "berhasil check in table", data: data[0] });
+    } catch (error) {
+      console.log(error);
+
       res.status(500).json({ error });
     }
   },

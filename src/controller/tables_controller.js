@@ -4,14 +4,19 @@ import { QueryTypes } from "sequelize";
 
 const tablesController = {
   getAllTables: async (req, res) => {
+    const { status } = req.query;
+    let qs = `
+      SELECT t.*, ts.name as status_name FROM tables t
+      JOIN table_status ts ON t.table_status_id = ts.table_status_id
+    `;
+
+    if (status) {
+      qs += ` WHERE t.table_status_id = ${parseInt(status)}`;
+    }
+
     try {
-      const data = await initModels(sequelize).tables.findAll({
-        include: [
-          {
-            model: initModels(sequelize).table_status,
-            as: "table_status",
-          },
-        ],
+      const data = await sequelize.query(qs, {
+        type: QueryTypes.SELECT,
       });
 
       res
@@ -31,6 +36,35 @@ const tablesController = {
       });
 
       res.status(201).json({ message: "berhasil menambahkan data tables" });
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  },
+
+  updateTable: async (req, res) => {
+    const { id } = req.params;
+    const { name, table_status_id } = req.body;
+
+    try {
+      await initModels(sequelize).tables.update(
+        { name, table_status_id },
+        { where: { table_id: id } }
+      );
+
+      res.status(200).json({ message: "berhasil mengupdate data tables" });
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  },
+  deleteTable: async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      await initModels(sequelize).tables.destroy({
+        where: { table_id: id },
+      });
+
+      res.status(200).json({ message: "berhasil menghapus data tables" });
     } catch (error) {
       res.status(500).json({ error });
     }

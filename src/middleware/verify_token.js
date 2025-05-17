@@ -34,11 +34,9 @@ const verifyIsSuperAdmin = async (req, res, next) => {
         },
       });
 
-      if (role.name !== "SUPER_ADMIN") {
+      if (role.name !== "ADMIN") {
         return res.sendStatus(403);
       }
-
-      req.institution_id = decoded.institution_id;
 
       next();
     });
