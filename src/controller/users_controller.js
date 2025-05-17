@@ -4,6 +4,8 @@ import { hashPassword, comparePassword } from "../utility/gen_password.js";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { log } from "console";
+import { get } from "http";
+import getTanggalJakartaFormatted from "../utility/get_date_now.js";
 
 dotenv.config();
 
@@ -79,7 +81,8 @@ const usersController = {
       });
 
       // cek booked today
-      const dateToday = new Date().toISOString().split("T")[0];
+      const dateToday = getTanggalJakartaFormatted();
+
       const bookedToday = await sequelize.query(
         `SELECT * FROM reservations WHERE user_id = ${user.user_id} AND booked_at = '${dateToday}' and reservation_status_id = 1`,
         {
