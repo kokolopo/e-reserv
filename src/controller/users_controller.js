@@ -81,7 +81,7 @@ const usersController = {
       // cek booked today
       const dateToday = new Date().toISOString().split("T")[0];
       const bookedToday = await sequelize.query(
-        `SELECT * FROM reservations WHERE user_id = ${user.user_id} AND booked_at = '${dateToday}'`,
+        `SELECT * FROM reservations WHERE user_id = ${user.user_id} AND booked_at = '${dateToday}' and reservation_status_id = 1`,
         {
           type: sequelize.QueryTypes.SELECT,
         }
