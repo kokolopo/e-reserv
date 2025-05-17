@@ -56,6 +56,7 @@ const tablesController = {
       res.status(500).json({ error });
     }
   },
+
   deleteTable: async (req, res) => {
     const { id } = req.params;
 
